@@ -50,15 +50,15 @@ def find_slope_min(signal, start_idx, direction=1, window=5, slope_thresh=0.01):
 # Definitions
 data_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Data"
 #figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
-results_folder = ""
+results_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Results"
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
 max_n_participant = 2  # maximal number of participants per group
 
 # Analysis parameters
 rise_fall_edge = 500
-local_minima_window = 5 # samples
-offset_contact = 10 # in Newton
+local_minima_window = 5  # samples
+offset_contact = 10  # in Newton
 
 for group in participant_groups:
     for pi in range(1, max_n_participant + 1):  # goes up to 33, the max nr of participants in a group
@@ -70,6 +70,7 @@ for group in participant_groups:
                 # Load the data
                 data = np.loadtxt(data_folder + '/01_raw-data/sub-' + participant_ID + '/beh/sub-' + participant_ID +
                                   '_run-' + rep + '_task-gait_beh.tsv', delimiter='\t')
+
                 # parse data into variables
                 time = data[:, 0]
                 left_force = data[:, 1]
@@ -117,17 +118,29 @@ for group in participant_groups:
                     FC_times.append(time[FC_idx])
                     FC_indices.append(FC_idx)
 
-                # step 4. Save the
+                # step 4. compute stride times
+                stride_times = []
+                for step_idx in range(1, len(FC_indices)-1):
+                    stride_time = FC_times[step_idx + 1] - FC_times[step_idx]
+                    stride_times.append(stride_time)
 
-                # # visualize step 1. rising and falling edges------------------------------------------------------------
-                # plt.plot(time[1:2000], left_force[1:2000], label='Left Foot Total Force')
-                # plt.plot(time[1:2000], right_force[1:2000], label='Right Foot Total Force')
-                # for idx in edgesLeft[edgesLeft < 2000]:
-                #     plt.axvline(x=time[idx], color='g', linestyle='--', label='Edge Left')
-                # for idx in edgesRight[edgesRight < 2000]:
-                #     plt.axvline(x=time[idx], color='r', linestyle='--', label='Edge Left')
-                # plt.show()
-                # # ------------------------------------------------------------------------------------------------------
+                out_data = np.column_stack((stride_time, stride_time))
+
+                # resave the resulting file in "raw-data folder" following BIDS conventions
+                out_dir = results_folder + '/'
+                os.makedirs(out_dir, exist_ok=True)  # when saving anything, the target folder needs to exist first
+                out_file = 'sub-' + participant_ID + '_strides.tsv'
+                np.savetxt(out_dir + out_file, stride_times, delimiter='\t', fmt='%.6f')
+
+                # visualize step 1. rising and falling edges------------------------------------------------------------
+                plt.plot(time[1:2000], left_force[1:2000], label='Left Foot Total Force')
+                plt.plot(time[1:2000], right_force[1:2000], label='Right Foot Total Force')
+                for idx in edgesLeft[edgesLeft < 2000]:
+                    plt.axvline(x=time[idx], color='g', linestyle='--', label='Edge Left')
+                for idx in edgesRight[edgesRight < 2000]:
+                    plt.axvline(x=time[idx], color='r', linestyle='--', label='Edge Left')
+                plt.show()
+                # ------------------------------------------------------------------------------------------------------
 
 
                 # # visualize step 2. derivative and vertical lines
