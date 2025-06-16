@@ -48,7 +48,7 @@ for group in participant_groups:
                 plt.close()
 
             except:  #these lines are executed when some files do not exist
-                pass #    print('Could not import ' + participant_ID + '_' + rep + '.txt')
+                print('error')  # print('Could not import ' + participant_ID + '_' + rep + '.txt')
             else:
                 print('Imported ' + participant_ID + '_' + rep + '.txt')
 
