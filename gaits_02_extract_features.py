@@ -49,11 +49,11 @@ def find_slope_min(signal, start_idx, direction=1, window=5, slope_thresh=0.01):
 
 # Definitions
 data_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Data"
-#figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
+figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
 results_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Results"
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
-max_n_participant = 2  # maximal number of participants per group
+max_n_participant = 33  # maximal number of participants per group
 
 # Analysis parameters
 rise_fall_edge = 500
@@ -147,6 +147,7 @@ for group in participant_groups:
                     FC_indices_right.append(FC_idx)
 
                 # step 4. compute stride times
+                # ------------------------------------------------------------------------------------------------------
                 stride_times_left = []
                 stride_times_right = []
                 for step_idx in range(1, len(FC_indices_left)-1):
@@ -157,7 +158,6 @@ for group in participant_groups:
                     stride_time = FC_times_right[step_idx + 1] - FC_times_right[step_idx]
                     stride_times_right.append(stride_time)
 
-
                 out_data = np.column_stack((stride_times_left, stride_times_right))
 
                 # resave the resulting file in "raw-data folder" following BIDS conventions
@@ -166,6 +166,9 @@ for group in participant_groups:
                 out_file = 'sub-' + participant_ID + '_strides.tsv'
                 np.savetxt(out_dir + out_file, out_data, delimiter='\t', fmt='%.6f')
 
+                # VISUALIZATION ----------------------------------------------------------------------------------------
+                # ------------------------------------------------------------------------------------------------------
+                # ------------------------------------------------------------------------------------------------------
                 # visualize step 1. rising and falling edges------------------------------------------------------------
                 plt.plot(time[1:2000], left_force[1:2000], label='Left Foot Total Force')
                 plt.plot(time[1:2000], right_force[1:2000], label='Right Foot Total Force')
@@ -173,9 +176,13 @@ for group in participant_groups:
                     plt.axvline(x=time[idx], color='g', linestyle='--', label='Edge Left')
                 for idx in edgesRight[edgesRight < 2000]:
                     plt.axvline(x=time[idx], color='r', linestyle='--', label='Edge Left')
-                plt.show()
-                # ------------------------------------------------------------------------------------------------------
 
+                figure_filename = figure_folder + '/02_edge_detection/' + 'edges_' + participant_ID + '_' + rep + '.png'
+                os.makedirs(figure_folder + '/02_edge_detection/', exist_ok=True)
+                plt.savefig(figure_filename)
+                plt.close()
+
+                # visualizing final contact points  --------------------------------------------------------------------
                 # Plot only the first 2000 data points
                 plt.plot(time[:2000], left_force[:2000], label='Force signal')
 
@@ -195,7 +202,12 @@ for group in participant_groups:
                 plt.ylabel('Force (N)')
                 plt.title('Force Signal (first 2000 samples) with Final Contacts')
                 plt.legend()
-                plt.show()
+
+                figure_filename = figure_folder + '/03_final_contacts/' + 'fc_' + participant_ID + '_' + rep + '.png'
+                os.makedirs(figure_folder + '/03_final_contacts/', exist_ok=True)
+                plt.savefig(figure_filename)
+                plt.close()
+
 
             except:
                 print('error')
