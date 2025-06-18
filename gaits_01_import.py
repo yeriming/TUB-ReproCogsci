@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Definitions
-data_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Data"
-#figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
+data_folder = "/Users/yeriming/Downloads/ReproResearch/Data"
+figure_folder = "/Users/yeriming/Downloads/ReproResearch/Figures"
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
 max_n_participant = 33  # maximal number of participants per group
@@ -33,19 +33,18 @@ for group in participant_groups:
                 out_file = 'sub-' + participant_ID + '_run-' + rep + '_task-gait_beh.tsv'
                 np.savetxt(out_dir + out_file, out_data, delimiter='\t', fmt='%.6f')
 
-                # # Visualise total force data
-                # plt.plot(time[1:2000], left_force[1:2000], label='Left Foot Total Force')
-                # plt.plot(time[1:2000], right_force[1:2000], label='Right Foot Total Force')
-                # plt.ylabel('Force (N)')
-                # plt.legend()
-                # plt.title('Total Vertical Ground Reaction Force')
-                # # plt.show()
-                #
-                # # save the figure
-                # figure_filename = figure_folder + '/01_raw-data/' + 'raw_' + participant_ID + '_' + rep + '.png'
-                # os.makedirs(figure_folder + '/01_raw-data/', exist_ok=True)  # when saving anything, the target folder needs to exist first
-                # plt.savefig(figure_filename)
-                # plt.close()
+                # Visualise total force data
+                plt.plot(time[1:2000], left_force[1:2000], label='Left Foot Total Force')
+                plt.plot(time[1:2000], right_force[1:2000], label='Right Foot Total Force')
+                plt.ylabel('Force (N)')
+                plt.legend()
+                plt.title('Total Vertical Ground Reaction Force')
+
+                # save the figure
+                figure_filename = figure_folder + '/01_raw-data/' + 'raw_' + participant_ID + '_' + rep + '.png'
+                os.makedirs(figure_folder + '/01_raw-data/', exist_ok=True)  # when saving anything, the target folder needs to exist first
+                plt.savefig(figure_filename)
+                plt.close()
 
             except:  #these lines are executed when some files do not exist
                 pass #    print('Could not import ' + participant_ID + '_' + rep + '.txt')
