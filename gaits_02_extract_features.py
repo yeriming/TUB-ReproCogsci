@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Contents of this script is based on Hausdorff, Ladin, and Wei (1995)
+# Created for course Digital Tools for Reproducible Research @ TU Berlin
 # author Sein Jeung, github @sjeung
 
 
