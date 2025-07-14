@@ -6,6 +6,19 @@ import matplotlib.pyplot as plt
 # author Sein Jeung, github @sjeung
 
 
+# Definitions
+data_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Data"
+figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
+results_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Results"
+subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
+participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
+max_n_participant = 33  # maximal number of participants per group
+
+# Analysis parameters
+rise_fall_edge = 500
+local_minima_window = 33  # samples
+offset_contact = 10  # in Newton
+
 def find_slope_min(signal, start_idx, direction=1, window=5, slope_thresh=0.01):
     """
     Walk along `signal` from `start_idx` in `direction` (+1=forward, -1=backward)
@@ -46,19 +59,6 @@ def find_slope_min(signal, start_idx, direction=1, window=5, slope_thresh=0.01):
             break
 
     return idx
-
-# Definitions
-data_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Data"
-figure_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Figures"
-results_folder = "P:/Sein_Jeung/Teaching/ReproResearch/Results"
-subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
-participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
-max_n_participant = 33  # maximal number of participants per group
-
-# Analysis parameters
-rise_fall_edge = 500
-local_minima_window = 33  # samples
-offset_contact = 10  # in Newton
 
 def detect_edges(force, threshold):
     above_threshold = force > threshold
@@ -147,7 +147,6 @@ for group in participant_groups:
 
             def pad(array, length):
                 return array + [np.nan] * (length - len(array))
-
 
             stride_left_padded = pad(stride_times_left, max_len)
             stride_right_padded = pad(stride_times_right, max_len)
