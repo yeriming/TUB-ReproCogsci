@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # Definitions
 data_folder = "/Users/yeriming/Downloads/ReproResearch/Data"
 figure_folder = "/Users/yeriming/Downloads/ReproResearch/Figures"
+
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
 max_n_participant = 33  # maximal number of participants per group
@@ -40,14 +41,19 @@ for group in participant_groups:
                 plt.legend()
                 plt.title('Total Vertical Ground Reaction Force')
 
+
                 # save the figure
                 figure_filename = figure_folder + '/01_raw-data/' + 'raw_' + participant_ID + '_' + rep + '.png'
                 os.makedirs(figure_folder + '/01_raw-data/', exist_ok=True)  # when saving anything, the target folder needs to exist first
+
+                # plt.show()
+
+      
                 plt.savefig(figure_filename)
                 plt.close()
 
             except:  #these lines are executed when some files do not exist
-                pass #    print('Could not import ' + participant_ID + '_' + rep + '.txt')
+                print('error')  # print('Could not import ' + participant_ID + '_' + rep + '.txt')
             else:
                 print('Imported ' + participant_ID + '_' + rep + '.txt')
 
