@@ -1,155 +1,120 @@
-# TUB Reproducible Research Portfolio - Gait Analysis
+# TUB-ReproCogsci - Gait Analysis Scripts
 
 ## Repository Creator Information
 - **Name:** Yerim Lee
 - **Institution:** TU Berlin
 - **Email:** yerimisyerim@gmail.com
-- **Course:** Digital Tools for Reproducible Research
+- **Course:** Seminar Digital Tools for Reproducible Research
 
 ## Contributors
 - **Original Script Author:** Sein Jeung (sein.jeung@tu-berlin.de)
   - GitHub: [@sjeung](https://github.com/sjeung)
-  - Created original analysis scripts for gait data processing
-- **Repository Maintainer:** Yerim Lee
-  - Modified scripts for cross-platform compatibility and reproducibility
-  - Implemented portable path handling and documentation
+  - Created original analysis scripts based on Hausdorff, Ladin, and Wei (1995)
+- **Repository Maintainer:** [Your Name]
+  - Modified scripts for cross-platform compatibility
+  - Implemented portable path handling using pathlib
+  - Added automatic directory creation
 
 ## Project Description
 
-This repository contains Python scripts for analyzing gait data from the physionet database. The analysis focuses on extracting stride times from ground reaction force data and comparing gait patterns between control and patient groups.
+This repository contains three Python scripts for processing and analyzing data files. The scripts are designed to work sequentially to extract features and generate visualizations.
 
 ### Scripts Overview
 
 #### 1. `gaits_01_import.py`
-**Purpose:** Data import and preprocessing
-- Loads raw gait data from source files
-- Extracts time, left foot force, and right foot force data
-- Converts data to BIDS-compliant format
-- Generates visualization of raw force signals
-- **Output:** Processed data files in `Data/01_raw-data/` directory
+**Purpose:** Data import and format conversion
+- **Input:** Text files from `Data/00_source-data/` directory
+- **Processing:** Extracts columns 0, 17, 18 (time, left_force, right_force) from source data
+- **Output:** 
+  - Processed files in `Data/01_raw-data/sub-{participant_ID}/beh/`
+  - File naming: `sub-{participant_ID}_run-{rep}_task-gait_beh.tsv`
+  - Visualizations in `Figures/01_raw-data/`
 
 #### 2. `gaits_02_extract_features-2.py`
-**Purpose:** Feature extraction and stride time calculation
-- Detects rising and falling edges in force signals
-- Identifies local minima and final contact points
-- Calculates stride times for left and right feet
-- Based on methodology from Hausdorff, Ladin, and Wei (1995)
-- **Output:** Stride time data in `Results/` directory and analysis figures
+**Purpose:** Feature extraction using edge detection
+- **Input:** Processed data from previous script
+- **Processing:** 
+  - Edge detection with rise_fall_edge = 500
+  - Local minima detection with window = 33 samples
+  - Final contact detection with offset_contact = 10
+- **Output:**
+  - Result files: `sub-{participant_ID}_strides.tsv` in `Results/` directory
+  - Visualizations in `Figures/02_edge_detection/` and `Figures/03_final_contacts/`
 
 #### 3. `gait_03_summary.py`
-**Purpose:** Group analysis and visualization
-- Loads individual participant stride data
-- Computes group averages for control and patient populations
-- Generates scatter plots comparing groups
-- **Output:** Summary statistics and comparison visualizations
+**Purpose:** Data aggregation and group comparison
+- **Input:** Stride files from `Results/` directory
+- **Processing:** Computes averages for participant groups "Co" and "Pt"
+- **Output:** Summary statistics and comparison scatter plots
 
-## Dataset Information
+## Dataset Configuration
 
-**Data Source:** Gait analysis data from physionet database
-- **Subset Used:** "Ga" (one of Ju, Si, Ga subsets)
-- **Groups:** 
-  - Control group (Co): Healthy participants
-  - Patient group (Pt): Participants with gait disorders
-- **Measurements:** Ground reaction forces for left and right feet
-- **Sampling:** Up to 33 participants per group, multiple recording sessions
-
-**Data Structure:**
-- Raw data contains time series of vertical ground reaction forces
-- Analysis focuses on stride time extraction and group comparisons
-- Results include individual stride times and group statistics
+### Processing Parameters (from code)
+- **subset_name:** "Ga" (code comments indicate alternatives: "Ju", "Si", "Ga")
+- **participant_groups:** ("Co", "Pt")
+- **max_n_participant:** 33
+- **rep sessions:** ('01', '02', '10')
 
 ## Requirements
 
-### Python Dependencies
-- numpy
-- matplotlib
-- pathlib (built-in)
-- os (built-in)
-
-### System Requirements
-- Python 3.6+
-- Cross-platform compatible (Windows, macOS, Linux)
+### Dependencies (from import statements)
+- import os 
+- import numpy as np 
+- import matplotlib.pyplot as plt 
+- from pathlib import Path
 
 ## Installation and Setup
 
 1. **Clone the repository:**
 - git clone https://github.com/[your-username]/TUB-ReproCogsci.git
 cd TUB-ReproCogsci
-2. **Install dependencies:**
+2. **Install required packages:**
 - pip install numpy matplotlib
-3. **Prepare data structure:**
-The scripts will automatically create the following directories:
-- `Data/` - Raw and processed data files
-- `Results/` - Analysis output files
-- `Figures/` - Generated visualizations
 
 ## Usage Instructions
 
-### Step 1: Data Import
-- python gaits_01_import.py
-- Processes raw data files from `Data/00_source-data/`
-- Creates BIDS-formatted files in `Data/01_raw-data/`
-- Generates force signal visualizations
+### Execution Order
+Scripts must be run in sequence:
+- Step 1: Process raw data files (gaits_01_import.py)
 
-### Step 2: Feature Extraction
-- python gaits_02_extract_features-2.py
-- Analyzes processed data to extract stride times
-- Creates result files in `Results/` directory
-- Generates edge detection and contact point visualizations
+- Step 2: Extract features and calculate stride times (gaits_02_extract_features-2.py)
 
-### Step 3: Summary Analysis
-- python gait_03_summary.py
-- - Loads all participant data for group analysis
-- Creates summary statistics and comparison plots
-- Outputs group comparison visualizations
+- Step 3: Generate summary analysis (gait_03_summary.py)
 
+### Expected Input
+- Source files should be placed in `Data/00_source-data/`
+- File naming pattern: `{participant_ID}_{rep}.txt`
+- Where participant_ID follows pattern: `{subset_name}{group}{number:02d}`
+- Example: `GaCo01_01.txt`, `GaPt15_02.txt`
 
-## Key Improvements Made
+## Output Files
 
-### Reproducibility Enhancements
-- **Portable Path Handling:** Replaced hardcoded absolute paths with relative paths using `pathlib`
-- **Automatic Directory Creation:** Scripts automatically create required directories
-- **Cross-Platform Compatibility:** Code works on Windows, macOS, and Linux without modification
-- **Error Handling:** Improved exception handling with informative error messages
+### Results Directory
+- **File format:** Tab-separated values (.tsv)
+- **Structure:** Two columns (left stride times, right stride times)
+- **Data handling:** NaN padding when arrays have unequal lengths
 
-### Code Quality Improvements
-- Consistent use of `pathlib.Path` for all file operations
-- Removal of system-specific path separators
-- Enhanced documentation and comments
-- Standardized variable naming conventions
-
-## Methodology
-
-The gait analysis follows established biomechanical principles:
-
-1. **Force Signal Processing:** Raw ground reaction forces are filtered and processed
-2. **Edge Detection:** Rising and falling edges identify foot contact phases
-3. **Stride Time Calculation:** Time between consecutive foot contacts defines stride duration
-4. **Group Comparison:** Statistical comparison between control and patient populations
+### Figures Directory
+- **Format:** PNG images saved for each processing stage
+- **Naming patterns:** 
+  - `raw_{participant_ID}_{rep}.png`
+  - `edges_{participant_ID}_{rep}.png`
+  - `fc_{participant_ID}_{rep}.png`
 
 ## Troubleshooting
 
-### Common Issues
-- **File Not Found Errors:** Ensure source data files are in `Data/00_source-data/` directory
-- **Permission Errors:** Check write permissions for output directories
-- **Import Errors:** Verify all required Python packages are installed
-
-### Debug Mode
-To debug file processing issues, check the console output for specific error messages and file paths.
-
 ## License
 
-MIT License
+MIT license
 
 ## Contact
 
-For questions about this implementation or the course assignment:
-- Repository Maintainer: yerimisyerim@gmail.com
-- Original Author: sein.jeung@tu-berlin.de
-- Course: Seminar Digital Tools for Reproducible Research, TU Berlin
+For questions about this implementation:
+- **Repository Maintainer:** yerimisyerim@gmail.com
+- **Original Author:** sein.jeung@tu-berlin.de
+- **Course:** Digital Tools for Reproducible Research, TU Berlin
 
 ## Acknowledgments
 
-- Original analysis methodology based on Hausdorff, Ladin, and Wei (1995)
-- Course instruction and guidance by Sein Jeung
-- Physionet database for providing the gait analysis dataset
+- Original script methodology referenced from Hausdorff, Ladin, and Wei (1995) (noted in code comments)
+- Course instruction by Sein Jeung, TU Berlin
