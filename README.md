@@ -101,8 +101,6 @@ Scripts must be run in sequence:
   - `edges_{participant_ID}_{rep}.png`
   - `fc_{participant_ID}_{rep}.png`
 
-## Troubleshooting
-
 ## License
 
 MIT license
