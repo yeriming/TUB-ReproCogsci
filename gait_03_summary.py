@@ -1,10 +1,19 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-# Definitions
-figure_folder = "/Users/yeriming/Downloads/ReproResearch/Figures"
-results_folder = "/Users/yeriming/Downloads/ReproResearch/Results"
+# Get the directory where this script is located
+script_dir = Path(__file__).parent.absolute()
+
+# Definitions - using relative paths
+figure_folder = script_dir / "Figures"
+results_folder = script_dir / "Results"
+
+# Create directories if they don't exist
+figure_folder.mkdir(exist_ok=True)
+results_folder.mkdir(exist_ok=True)
+
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
 max_n_participant = 33  # maximal number of participants per group

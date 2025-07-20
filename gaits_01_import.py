@@ -1,10 +1,18 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-# Definitions
-data_folder = "/Users/yeriming/Downloads/ReproResearch/Data"
-figure_folder = "/Users/yeriming/Downloads/ReproResearch/Figures"
+# Get the directory where this script is located
+script_dir = Path(__file__).parent.absolute()
+
+# Definitions - using relative paths
+data_folder = script_dir / "Data"
+figure_folder = script_dir / "Figures"
+
+# Create directories if they don't exist
+data_folder.mkdir(exist_ok=True)
+figure_folder.mkdir(exist_ok=True)
 
 subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
 participant_groups = "Co", "Pt"  # Co for controls, Pt for patients

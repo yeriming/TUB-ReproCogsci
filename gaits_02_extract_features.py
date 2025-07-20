@@ -1,19 +1,24 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 # Contents of this script is based on Hausdorff, Ladin, and Wei (1995)
 # Created for course Digital Tools for Reproducible Research @ TU Berlin
 # author Sein Jeung, github @sjeung
 
+# Get the directory where this script is located
+script_dir = Path(__file__).parent.absolute()
 
-# Definitions
-data_folder = "/Users/yeriming/Downloads/ReproResearch/Data"
-figure_folder = "/Users/yeriming/Downloads/ReproResearch/Figures"
-results_folder = "/Users/yeriming/Downloads/ReproResearch/Results"
-subset_name = "Ga"  # enter one of the following : Ju, Si, Ga
-participant_groups = "Co", "Pt"  # Co for controls, Pt for patients
-max_n_participant = 33  # maximal number of participants per group
+# Definitions - using relative paths
+data_folder = script_dir / "Data"
+figure_folder = script_dir / "Figures"
+results_folder = script_dir / "Results"
+
+# Create directories if they don't exist
+data_folder.mkdir(exist_ok=True)
+figure_folder.mkdir(exist_ok=True)
+results_folder.mkdir(exist_ok=True)
 
 # Analysis parameters
 rise_fall_edge = 500
